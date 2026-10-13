@@ -32,22 +32,32 @@ function functions.getNeighborCells()
             for dx = -1, 1 do
                 for dy = -1,1 do
 
-                if dx ~= 0 or dy ~= 0 then
-                    local nx = x + dx
-                    local ny = y + dy
-
-                    if cells[nx] and map[nx][ny] then
-                        if map[nx][ny].state == 1 then
-                            count = count + 1
+                    if dx ~= 0 or dy ~= 0 then
+                        local nx = x + dx
+                        local ny = y + dy
+    
+                        if cells[nx] and cells[nx][ny] then
+                            if cells[nx][ny].state == 1 then
+                                count = count + 1
+                            end
                         end
                     end
-                end
+                end    
             end
             cells[x][y].neighbors = count
         end
     end
 end
 
+
+function functions.setNextGeneration()
+    
+end
+
+function functions.timer()
+    
+end    
+    
 function functions.drawFrames()
     for x = 1, values.mapWidth do
         for y = 1, values.mapHeight do
@@ -75,6 +85,7 @@ end
 
 function love.load()
     cells[2][2] = {neighbors = 0, state = 1}
+    functions.getNeighborCells()
 end
 
 function love.update(dt)
