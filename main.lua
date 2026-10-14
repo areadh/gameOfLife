@@ -1,4 +1,4 @@
-screen = love.window.setFullscreen(true)
+
 
 values = {
     mapHeight = (love.graphics.getHeight() / 16) - 2,
@@ -51,11 +51,25 @@ end
 
 
 function functions.setNextGeneration()
-    
+        for x = 1, values.mapWidth do
+            for y = 1, values.mapHeight do
+                if cells[x][y].neighbors > 4 and cells[x][y].neighbors < 2 then
+                    cells[x][y].state = 0
+                else
+                    cells[x][y].state = 1
+                end        
+            end
+        end
 end
 
-function functions.timer()
-    
+function functions.timer(dt)
+    local timer = 0
+    timer = timer * dt
+    love.graphics.print(timer, 10, 10)
+    if timer >= 2 then
+        timer = 0
+        functions.setNextGeneration()
+    end    
 end    
     
 function functions.drawFrames()
@@ -84,12 +98,12 @@ end
 --////////////--
 
 function love.load()
-    cells[2][2] = {neighbors = 0, state = 1}
+    cells[12][12] = {neighbors = 0, state = 1}
     functions.getNeighborCells()
 end
 
 function love.update(dt)
-
+    functions.timer(dt)
 end
 
 function love.draw()
