@@ -1,8 +1,8 @@
-
+love.window.setFullscreen(true)
 
 values = {
-    mapHeight = (love.graphics.getHeight() / 16) - 2,
-    mapWidth = (love.graphics.getWidth() / 16) - 2,
+    mapHeight = math.floor((love.graphics.getHeight() / 16)) - 2,
+    mapWidth = math.floor((love.graphics.getWidth() / 16)) - 2,
     maxNeighbors = 4,
     minNeighbors = 2,
     tileSize = 16,
@@ -22,7 +22,9 @@ end
 
 --///////////--
 
-functions = {}
+functions = {
+    timer = 0
+}
 
 function functions.getNeighborCells()
     for x = 1, values.mapWidth do
@@ -53,7 +55,7 @@ end
 function functions.setNextGeneration()
         for x = 1, values.mapWidth do
             for y = 1, values.mapHeight do
-                if cells[x][y].neighbors > 4 and cells[x][y].neighbors < 2 then
+                if cells[x][y].neighbors > 4 or cells[x][y].neighbors < 2 then
                     cells[x][y].state = 0
                 else
                     cells[x][y].state = 1
@@ -62,12 +64,11 @@ function functions.setNextGeneration()
         end
 end
 
-function functions.timer(dt)
-    local timer = 0
-    timer = timer * dt
-    love.graphics.print(timer, 10, 10)
-    if timer >= 2 then
-        timer = 0
+function functions.setTimer(dt)
+    functions.timer = functions.timer + dt
+    love.graphics.print(functions.timer, 10, 10)
+    if functions.timer >= 1 then
+        functions.timer = 0
         functions.setNextGeneration()
     end    
 end    
@@ -76,7 +77,7 @@ function functions.drawFrames()
     for x = 1, values.mapWidth do
         for y = 1, values.mapHeight do
             love.graphics.setColor(0.5,0.5,0.5)
-            love.graphics.rectangle("line", x * values.tileSize, y * values.tileSize, values.tileSize, values.tileSize)
+            love.graphics.rectangle("line", x  * values.tileSize, y * values.tileSize, values.tileSize, values.tileSize)
         end
     end
 end
@@ -89,7 +90,7 @@ function functions.drawCells()
                 love.graphics.rectangle("fill", x * values.tileSize, y * values.tileSize, values.tileSize, values.tileSize)
             else
                 love.graphics.setColor(0,0,0)
-                love.graphics.rectangle("fill", x * values.tileSize, y * values.tileSize, values.tileSize, values.tileSize)
+                love.graphics.rectangle("fill", x* values.tileSize, y * values.tileSize, values.tileSize, values.tileSize)
             end
         end
     end
@@ -99,11 +100,14 @@ end
 
 function love.load()
     cells[12][12] = {neighbors = 0, state = 1}
-    functions.getNeighborCells()
+    cells[12][13] = {neighbors = 0, state = 1}
+    cells[13][12] = {neighbors = 0, state = 1}
+    
 end
 
 function love.update(dt)
-    functions.timer(dt)
+    functions.getNeighborCells()
+    functions.setTimer(dt)
 end
 
 function love.draw()
