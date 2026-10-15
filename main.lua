@@ -1,4 +1,5 @@
-love.window.setFullscreen(true)
+--love.window.setFullscreen(true)
+love.window.setMode(800, 600, {resizable = true, fullscreen = false, vsync = true})
 
 values = {
     mapHeight = math.floor((love.graphics.getHeight() / 16)) - 2,
@@ -6,7 +7,6 @@ values = {
     maxNeighbors = 4,
     minNeighbors = 2,
     tileSize = 16,
-    delayTime = 2
 }
 
 --////////////--
@@ -51,23 +51,28 @@ function functions.getNeighborCells()
     end
 end
 
-
 function functions.setNextGeneration()
-        for x = 1, values.mapWidth do
-            for y = 1, values.mapHeight do
-                if cells[x][y].neighbors > 4 or cells[x][y].neighbors < 2 then
-                    cells[x][y].state = 0
-                else
-                    cells[x][y].state = 1
-                end        
+    for x = 1, values.mapWidth do
+        for y = 1, values.mapHeight do
+
+            if cells[x][y].state == 1 and
+               (cells[x][y].neighbors == 2 or cells[x][y].neighbors == 3) then
+                cells[x][y].state = 1
+
+            elseif cells[x][y].state == 0 and cells[x][y].neighbors == 3 then
+                cells[x][y].state = 1
+
+            else
+                cells[x][y].state = 0
             end
         end
+    end
 end
 
 function functions.setTimer(dt)
     functions.timer = functions.timer + dt
     love.graphics.print(functions.timer, 10, 10)
-    if functions.timer >= 1 then
+    if functions.timer >= 0.5 then
         functions.timer = 0
         functions.setNextGeneration()
     end    
@@ -100,9 +105,10 @@ end
 
 function love.load()
     cells[12][12] = {neighbors = 0, state = 1}
-    cells[12][13] = {neighbors = 0, state = 1}
     cells[13][12] = {neighbors = 0, state = 1}
-    
+    cells[14][12] = {neighbors = 0, state = 1}
+    cells[14][11] = {neighbors = 0, state = 1}
+    cells[13][10] = {neighbors = 0, state = 1}
 end
 
 function love.update(dt)
