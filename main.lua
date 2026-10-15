@@ -11,6 +11,8 @@ values = {
 
 --////////////--
 
+-- cell map
+
 cells = {}
 
 for x = 1, values.mapWidth do
@@ -26,19 +28,21 @@ functions = {
     timer = 0
 }
 
+
+
 function functions.getNeighborCells()
     for x = 1, values.mapWidth do
         for y = 1, values.mapHeight do
                 local count = 0
 
-            for dx = -1, 1 do
+            for dx = -1, 1 do --this part counts neighbor cells
                 for dy = -1,1 do
 
-                    if dx ~= 0 or dy ~= 0 then
+                    if dx ~= 0 or dy ~= 0 then --ignoring center cell
                         local nx = x + dx
                         local ny = y + dy
     
-                        if cells[nx] and cells[nx][ny] then
+                        if cells[nx] and cells[nx][ny] then --updating cell neighbors
                             if cells[nx][ny].state == 1 then
                                 count = count + 1
                             end
@@ -51,6 +55,13 @@ function functions.getNeighborCells()
     end
 end
 
+--[[
+    original conway's game of life rules
+    //Any live cell with fewer than two live neighbors dies
+    //Any live cell with two or three live neighbors stays alive
+    //Any live cell with more than three live neighbors dies
+    //Any dead cell with exactly three live neighbors becomes a live cell
+]]
 function functions.setNextGeneration()
     for x = 1, values.mapWidth do
         for y = 1, values.mapHeight do
@@ -69,6 +80,7 @@ function functions.setNextGeneration()
     end
 end
 
+-- a basic delta time based timer. current time + delta time
 function functions.setTimer(dt)
     functions.timer = functions.timer + dt
     love.graphics.print(functions.timer, 10, 10)
@@ -104,6 +116,7 @@ end
 --////////////--
 
 function love.load()
+    --this is a basic glider 
     cells[12][12] = {neighbors = 0, state = 1}
     cells[13][12] = {neighbors = 0, state = 1}
     cells[14][12] = {neighbors = 0, state = 1}
